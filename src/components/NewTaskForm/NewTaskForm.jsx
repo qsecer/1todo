@@ -22,7 +22,7 @@ export default  class NewTaskForm extends Component {
     render () {
         return (
             <header className="header">
-                <h1>Tod</h1>
+                <h1>Todos</h1>
                 <form onSubmit={this.onSubmit}>
                     <input className="new-todo"
                            value={this.state.label}
