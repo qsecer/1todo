@@ -1,0 +1,1 @@
+"prepare": ".husky",(.husky из scripts в package.json)
