@@ -1,10 +1,10 @@
 import React , {Component} from "react";
 import Task from "../Task/Task.jsx";
-import "./TaskList.css";
+
 
 export default class TaskList extends Component {
     render() {
-        const { tasks, onDeleted, onCompleted, onEdit, onEditing, updateTaskLabel, submitEdit, offEdit } = this.props;
+        const { tasks, onDeleted, onCompleted, onEdit, onEditing, updateTaskLabel, submitEdit, offEdit, startTimer, pauseTimer } = this.props;
 
         return (
             <ul className="todo-list">
@@ -23,6 +23,11 @@ export default class TaskList extends Component {
                         updateTaskLabel={updateTaskLabel}
                         submitEdit={submitEdit}
                         offEdit={offEdit}
+                        pauseTimer={pauseTimer}
+                        startTimer={startTimer}
+                        min={task.min}
+                        sec={task.sec}
+                        remainingTime={task.remainingTime}
                     />
                 ))}
             </ul>

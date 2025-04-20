@@ -7,20 +7,25 @@ import "./app.css"
 export default class App extends Component {
     maxId = 0;
 
-    createTask = (label) => {
+    state = {
+        tasks: [],
+        filter: 'all',
+    };
+
+    createTask = (label, min, sec) => {
+
         return {
             label: label,
             completed: false,
             id: ++this.maxId,
             createdAt: new Date(),
-            isEditing: false
+            isEditing: false,
+            min: Number(min),
+            sec: Number(sec),
+            isTimerRunning: false,
+            remainingTime: Number(min) * 60 + Number(sec),
         }
     }
-
-    state = {
-        tasks: [],
-        filter: 'all',
-    };
 
     onCompleted = (id) => {
         this.setState(({ tasks }) => ({
@@ -40,9 +45,9 @@ export default class App extends Component {
         }));
     };
 
-    addTask = (task) => {
+    addTask = (task,  min, sec) => {
         this.setState(({ tasks }) => ({
-            tasks: [...tasks, this.createTask(task)]
+            tasks: [...tasks, this.createTask(task, min, sec)]
         }));
     };
 
@@ -96,6 +101,23 @@ export default class App extends Component {
         }))
     };
 
+    startTimer = (id, remainingTime) => {
+        console.log(`task is running ${id}`);
+
+        this.setState((tasks) => ({
+            tasks: tasks.map(task =>
+              task.id === id ? { ...task, remainingTime: setInterval(()=>{
+                      remainingTime - 1
+                  }, 1000)} : task
+            )
+        }))
+        console.log(`remainingTime: ${remainingTime}`);
+    }
+
+    pauseTimer = (id, remainingTime) => {
+        console.log(`task is pause ${id}`);
+        console.log(`remainingTime: ${remainingTime}`);
+    }
 
     render() {
         const activeTasks = this.counterOfCompleted();
@@ -116,6 +138,9 @@ export default class App extends Component {
                     isEditing={this.state.isEditing}
                     submitEdit={this.submitEdit}
                     offEdit={this.offEdit}
+                    pauseTimer={this.pauseTimer}
+                    startTimer={this.startTimer}
+
                 />
                 <Footer
                     counterOfCompleted={activeTasks}

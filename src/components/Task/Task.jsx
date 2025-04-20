@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import "./Task.css"
 import {formatDistanceToNow} from 'date-fns'
 
 export default class Task extends Component {
@@ -18,7 +17,7 @@ export default class Task extends Component {
     }
 
     render() {
-        const { label, completed, onDeleted, onEditing, id, isEditing, onCompleted, submitEdit, offEdit} = this.props;
+        const { label, completed, onDeleted, onEditing, id, isEditing, onCompleted, submitEdit, offEdit, pauseTimer, startTimer, min, sec, remainingTime } = this.props;
         let liClass = "";
         if(completed){
             liClass += 'completed'
@@ -35,16 +34,18 @@ export default class Task extends Component {
                            onChange={() => onCompleted(id)}
                     />
                     <label>
-                        <span className="description" onClick={() => onCompleted(id)}>
-                                {label}
-                        </span>
+                        <span className="title">{label}</span>
+                            <span>
+                                <button className="icon icon-play" onClick={() => startTimer(id, remainingTime)} />
+                                <button className="icon icon-pause" onClick={() => pauseTimer(id, remainingTime)} />
+                                <span>{`${min} min ${sec} sec`}</span>
+                            </span>
                         <span className="created">
                                 {formatDistanceToNow(this.props.createdAt, {addSuffix: true})}
-                            </span>
+                        </span>
                     </label>
 
-
-                    <button className="icon icon-edit" onClick={() => onEditing(id)}/>
+                    <button className="icon icon-edit" onClick={() => onEditing(id)} />
                     <button className="icon icon-destroy" onClick={() => onDeleted(id)}/>
                 </div>
                 {isEditing && (
