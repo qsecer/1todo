@@ -1,154 +1,119 @@
-import React, { Component } from "react";
+import React, { useState, useRef } from 'react';
 import NewTaskForm from "../NewTaskForm/NewTaskForm.jsx";
 import Footer from "../Footer/Footer.jsx";
 import TaskList from "../TaskList/TaskList.jsx";
-import "./app.css"
+import "./app.css";
 
-export default class App extends Component {
-    maxId = 0;
+export default function App() {
 
-    state = {
-        tasks: [],
-        filter: 'all',
-    };
+  const maxId = useRef(0);
+  const [ tasks, setTasks ] = useState([]);
+  const [ filter, setFilter ] = useState('all');
+  const timers = useRef({});
 
-    createTask = (label, min, sec) => {
+  const createTask = (label, min, sec) => (
+    {
+      label: label,
+      completed: false,
+      id: ++maxId.current,
+      createdAt: new Date(),
+      isEditing: false,
+      min: Number(min),
+      sec: Number(sec),
+      isTimerRunning: false,
+      remainingTime: Number(min) * 60 + Number(sec),
+    })
 
-        return {
-            label: label,
-            completed: false,
-            id: ++this.maxId,
-            createdAt: new Date(),
-            isEditing: false,
-            min: Number(min),
-            sec: Number(sec),
-            isTimerRunning: false,
-            remainingTime: Number(min) * 60 + Number(sec),
-        }
+  const runTimer = (id) => {
+    setTasks(prev => prev.map(task =>
+      task.id === id ? {...task,  isTimerRunning: true } : task,
+    ));
+  }
+
+  const stopTimer = (id) => {
+    setTasks(prev => prev.map(task =>
+      task.id === id ? {...task,  isTimerRunning: false } : task,
+    ));
+  }
+
+  const addTask = (label,  min, sec ) => {
+    const newTask = createTask( label,  min, sec )
+    setTasks(prev => [...prev, newTask])
+  };
+
+  const deleteTask = (id) => {
+    setTasks(prev => prev.filter(task => task.id !== id));
+  };
+
+  const onCompleted = (id) => {
+    setTasks(prev => prev.map(task =>
+    task.id === id? { ...task, completed: !task.completed } : task))
+  };
+
+  const counterOfCompleted = () => {
+    return tasks.filter((task) => !task.completed).length;
+  };
+
+  const clearCompleted = () => {
+    setTasks(prev => prev.filter((task) => !task.completed))
+  };
+
+  const getFilteredItems = () => {
+    switch (filter){
+      case "active":
+        return tasks.filter(task => !task.completed);
+      case "completed":
+        return tasks.filter(task => task.completed);
+      default:
+        return tasks
     }
+  };
 
-    onCompleted = (id) => {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(task =>
-                task.id === id ? { ...task, completed: !task.completed } : task
-            )
-        }));
-    };
+  const onEditing = (id) => {
+    setTasks(prev => prev.map(task =>
+      task.id === id ? {...task,  isEditing: true } : task
+      ));
+  };
 
-    counterOfCompleted = () => {
-        return this.state.tasks.filter((task) => !task.completed).length;
-    };
+  const submitEdit = (e, id) => {
+    e.preventDefault()
+    const input = document.querySelector('li.editing > form.editing-form > input')
+    setTasks(prev => prev.map(task =>
+    task.id === id ? { ...task, isEditing: false, label: input.value} : task))
+  };
 
-    deleteTask = (id) => {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.filter(task => task.id !== id)
-        }));
-    };
+  const offEdit =  (id)=> {
+    setTasks(prev => prev.map(task =>
+    task.id === id ? { ...task, isEditing: false} : task
+    ))
+  };
 
-    addTask = (task,  min, sec) => {
-        this.setState(({ tasks }) => ({
-            tasks: [...tasks, this.createTask(task, min, sec)]
-        }));
-    };
+  const filteredTodos = getFilteredItems();
+  const activeTasks = counterOfCompleted();
 
-    clearCompleted = () => {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.filter(task => !task.completed),
-        }));
-    };
 
-    setFilter = (filter) => {
-        this.setState({ filter });
-    };
-
-    getFilteredItems = () => {
-        const { tasks, filter } = this.state;
-        switch (filter) {
-            case 'all':
-                return tasks;
-            case 'active':
-                return tasks.filter(task => !task.completed);
-            case 'completed':
-                return tasks.filter(task => task.completed);
-            default:
-                return tasks;
-        }
-    };
-
-    onEditing = (id) => {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(task =>
-                task.id === id ? { ...task, isEditing: true } : task
-            )
-        }));
-    };
-
-    submitEdit = (e,  id) => {
-        e.preventDefault()
-        const input = document.querySelector('li.editing > form.editing-form > input')
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(task =>
-                task.id === id ? { ...task, isEditing : false, label: input.value } : task
-            )
-        }));
-    };
-
-    offEdit =  (id)=> {
-        this.setState(({tasks}) => ({
-            tasks: tasks.map(task =>
-            task.id === id ? { ...task, isEditing: false} : task
-            )
-        }))
-    };
-
-    startTimer = (id, remainingTime) => {
-        console.log(`task is running ${id}`);
-
-        this.setState((tasks) => ({
-            tasks: tasks.map(task =>
-              task.id === id ? { ...task, remainingTime: setInterval(()=>{
-                      remainingTime - 1
-                  }, 1000)} : task
-            )
-        }))
-        console.log(`remainingTime: ${remainingTime}`);
-    }
-
-    pauseTimer = (id, remainingTime) => {
-        console.log(`task is pause ${id}`);
-        console.log(`remainingTime: ${remainingTime}`);
-    }
-
-    render() {
-        const activeTasks = this.counterOfCompleted();
-        const filteredTodos = this.getFilteredItems();
         return (
 
             <div className="todoapp">
                 <NewTaskForm
-                    onAdd={this.addTask}
+                    onAdd={addTask}
                 />
                 <TaskList
                     tasks={filteredTodos}
-                    onDeleted={this.deleteTask}
-                    onCompleted={this.onCompleted}
-                    onEdit={this.onEdit}
-                    updateTaskLabel={this.updateTaskLabel}
-                    onEditing={this.onEditing}
-                    isEditing={this.state.isEditing}
-                    submitEdit={this.submitEdit}
-                    offEdit={this.offEdit}
-                    pauseTimer={this.pauseTimer}
-                    startTimer={this.startTimer}
-
+                    onDeleted={deleteTask}
+                    onCompleted={onCompleted}
+                    onEditing={onEditing}
+                    submitEdit={submitEdit}
+                    offEdit={offEdit}
+                    runTimer={runTimer}
+                    stopTimer={stopTimer}
                 />
                 <Footer
                     counterOfCompleted={activeTasks}
-                    clearCompleted={this.clearCompleted}
-                    setFilter={this.setFilter}
-                    currentFilter={this.state.filter}
+                    clearCompleted={clearCompleted}
+                    setFilter={setFilter}
+                    currentFilter={filter}
                 />
             </div>
         );
     }
-}

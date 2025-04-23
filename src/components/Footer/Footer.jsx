@@ -1,11 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 
-
-class Footer extends Component {
-    render() {
-        const { counterOfCompleted, clearCompleted, setFilter, currentFilter } = this.props;
-
-        return (
+function Footer ({ counterOfCompleted, clearCompleted, setFilter, currentFilter }) {
+             return (
             <footer className="footer">
                 <span className="todo-count">{counterOfCompleted} items left</span>
                 <ul className="filters">
@@ -42,7 +38,6 @@ class Footer extends Component {
                 </button>
             </footer>
         );
-    }
 }
 
 export default Footer;

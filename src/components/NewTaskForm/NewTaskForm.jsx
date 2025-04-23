@@ -1,44 +1,38 @@
-import React, {Component} from "react";
+import React, { useState } from "react";
 
+export default function NewTaskForm ({onAdd}) {
 
-export default  class NewTaskForm extends Component {
-    state = {
-        label : "",
-        min: "",
-        sec: ""
-    }
+    const [formData, setFormData] = useState({
+        label: '',
+        min: '',
+        sec: '',
+    });
 
-    onInputChange = (event) => {
+    const onInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({
-            [name]: value,
-        });
+        setFormData((prev)=> {
+           return {...prev, [name] : value}
+        })
     };
 
-    onSubmit = (event) => {
-        event.preventDefault();
+    const onSubmit = (event) => {
+         event.preventDefault();
+         const {label, min, sec} = formData
+         if(label.trim() === '') return;
+         onAdd(label, min, sec);
+         setFormData({ label: '', min: '', sec: '' });
 
-        const { label, min, sec } = this.state;
-        if (label.trim() === "") return;
-
-        this.props.onAdd(label, min, sec)
-        this.setState({
-            label : "",
-            min: "",
-            sec: "",
-        })
-    }
-
-    render () {
-        return (
-          <header className="header">
+    };
+    return (
+          <header className="header"
+          >
               <h1>Todos</h1>
-              <form onSubmit={this.onSubmit} className='new-todo-form'>
+              <form onSubmit={onSubmit} className='new-todo-form'>
                   <input className="new-todo"
                          type='text'
                          name='label'
-                         value={this.state.label}
-                         onChange={this.onInputChange}
+                         value={formData.label}
+                         onChange={onInputChange}
                          placeholder="What needs to be done?"
                          autoFocus
                   />
@@ -47,7 +41,8 @@ export default  class NewTaskForm extends Component {
                     name="min"
                     className="new-todo-form__timer"
                     placeholder="Min"
-                    onChange={this.onInputChange}
+                    value={formData.min}
+                    onChange={onInputChange}
 
                   />
                   <input
@@ -55,7 +50,8 @@ export default  class NewTaskForm extends Component {
                     name="sec"
                     className="new-todo-form__timer"
                     placeholder="Sec"
-                    onChange={this.onInputChange}
+                    value={formData.sec}
+                    onChange={onInputChange}
 
                   />
                   <button type="submit"></button>
@@ -63,6 +59,4 @@ export default  class NewTaskForm extends Component {
 
           </header>
         )
-    }
-
 }
