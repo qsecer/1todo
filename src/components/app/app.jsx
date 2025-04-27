@@ -66,6 +66,10 @@ export default function App() {
   };
 
   const deleteTask = (id) => {
+    if (timers.current[id]) {
+      clearInterval(timers.current[id]);
+      delete timers.current[id];
+    }
     setTasks(prev => prev.filter(task => task.id !== id));
   };
 
@@ -100,11 +104,13 @@ export default function App() {
   };
 
   const submitEdit = (e, id) => {
-    e.preventDefault()
-    const input = document.querySelector('li.editing > form.editing-form > input')
+    e.preventDefault();
+    const input = e.target.elements[0]; // первый инпут в форме
     setTasks(prev => prev.map(task =>
-    task.id === id ? { ...task, isEditing: false, label: input.value} : task))
+      task.id === id ? { ...task, isEditing: false, label: input.value } : task
+    ));
   };
+
 
   const offEdit =  (id)=> {
     setTasks(prev => prev.map(task =>
