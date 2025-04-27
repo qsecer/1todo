@@ -11,11 +11,8 @@ export default function Task ({ label,
                                 onCompleted,
                                 submitEdit,
                                 offEdit,
-                                min,
-                                sec ,
                                 createdAt,
                                 remainingTime,
-                                isTimerRunning,
                                 stopTimer,
                                 onTimer
 }){
@@ -46,8 +43,8 @@ export default function Task ({ label,
                   <label>
                       <span className="title">{label}</span>
                       <span>
-                                <button className="icon icon-play" onClick={() => {onTimer(id), console.log(isTimerRunning, remainingTime)}} />
-                                <button className="icon icon-pause" onClick={() => {stopTimer(id),  console.log(isTimerRunning) }} />
+                                <button className="icon icon-play" onClick={() => {onTimer(id)}} />
+                                <button className="icon icon-pause" onClick={() => {stopTimer(id)}} />
                                 <span>{`${onMin} min ${onSec} sec`}</span>
                             </span>
                       <span className="created">
