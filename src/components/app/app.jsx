@@ -24,15 +24,39 @@ export default function App() {
       remainingTime: Number(min) * 60 + Number(sec),
     })
 
-  const runTimer = (id) => {
+  const onTimer = (id) => {
+    if(timers.current[id]) return;
+
     setTasks(prev => prev.map(task =>
       task.id === id ? {...task,  isTimerRunning: true } : task,
     ));
+
+    timers.current[id] = setInterval(() => {
+      setTasks(prev => {
+        return prev.map(task => {
+          if (task.id === id) {
+            const newTime = task.remainingTime - 1;
+            console.log(newTime);
+            if (newTime <= 0) {
+              clearInterval(timers.current[id]);
+              delete timers.current[id];
+              return { ...task, isTimerRunning: false, remainingTime: 0 };
+            }
+
+            return { ...task, remainingTime: newTime };
+          }
+          return task;
+        });
+      });
+    }, 1000);
   }
 
   const stopTimer = (id) => {
+    clearInterval(timers.current[id]);
+    delete timers.current[id];
+
     setTasks(prev => prev.map(task =>
-      task.id === id ? {...task,  isTimerRunning: false } : task,
+      task.id === id ? { ...task, isTimerRunning: false } : task
     ));
   }
 
@@ -91,7 +115,6 @@ export default function App() {
   const filteredTodos = getFilteredItems();
   const activeTasks = counterOfCompleted();
 
-
         return (
 
             <div className="todoapp">
@@ -105,8 +128,8 @@ export default function App() {
                     onEditing={onEditing}
                     submitEdit={submitEdit}
                     offEdit={offEdit}
-                    runTimer={runTimer}
                     stopTimer={stopTimer}
+                    onTimer={onTimer}
                 />
                 <Footer
                     counterOfCompleted={activeTasks}

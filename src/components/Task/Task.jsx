@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, { useState } from 'react';
 import {formatDistanceToNow} from 'date-fns';
 
 
@@ -14,16 +14,19 @@ export default function Task ({ label,
                                 min,
                                 sec ,
                                 createdAt,
-                                runTimer,
                                 remainingTime,
                                 isTimerRunning,
-                                stopTimer
+                                stopTimer,
+                                onTimer
 }){
 
         const [ newLabel, setnewLabel ] = useState(label);
         const handleInputChange = (e) => {
           setnewLabel(e.target.value)
         }
+        let onSec = remainingTime % 60;
+        let onMin =Math.floor(remainingTime / 60);
+
 
         let liClass = "";
         if(completed){
@@ -43,9 +46,9 @@ export default function Task ({ label,
                   <label>
                       <span className="title">{label}</span>
                       <span>
-                                <button className="icon icon-play" onClick={() => {runTimer(id), console.log(isTimerRunning)}} />
-                                <button className="icon icon-pause" onClick={() => {stopTimer(id), console.log(isTimerRunning)}} />
-                                <span>{`${min} min ${sec} sec`}</span>
+                                <button className="icon icon-play" onClick={() => {onTimer(id), console.log(isTimerRunning, remainingTime)}} />
+                                <button className="icon icon-pause" onClick={() => {stopTimer(id),  console.log(isTimerRunning) }} />
+                                <span>{`${onMin} min ${onSec} sec`}</span>
                             </span>
                       <span className="created">
                                 {formatDistanceToNow(createdAt, {addSuffix: true})}

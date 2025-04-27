@@ -11,8 +11,8 @@ export default function TaskList ({
                                     submitEdit,
                                     offEdit,
                                     startTimer,
-                                    runTimer,
                                     stopTimer,
+                                    onTimer
                                   })
                                     { return (
                                                 <ul className="todo-list">
@@ -35,9 +35,9 @@ export default function TaskList ({
                                                             min={task.min}
                                                             sec={task.sec}
                                                             remainingTime={task.remainingTime}
-                                                            runTimer={runTimer}
                                                             stopTimer={stopTimer}
                                                             isTimerRunning={task.isTimerRunning}
+                                                            onTimer={onTimer}
                                                         />
                                                     ))}
                                                 </ul>
