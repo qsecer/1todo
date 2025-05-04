@@ -45,11 +45,11 @@ export default function Task ({ label,
                       <span>
                                 <button className="icon icon-play" onClick={() => {onTimer(id)}} />
                                 <button className="icon icon-pause" onClick={() => {stopTimer(id)}} />
-                                <span>{`${onMin} min ${onSec} sec`}</span>
-                            </span>
+                                <span className='timer'>{`${onMin} min ${onSec} sec`}</span>
+                      </span>
                       <span className="created">
                                 {formatDistanceToNow(createdAt, {addSuffix: true})}
-                        </span>
+                      </span>
                   </label>
                   <button className="icon icon-edit" onClick={() => onEditing(id)} />
                   <button className="icon icon-destroy" onClick={() => onDeleted(id)}/>
