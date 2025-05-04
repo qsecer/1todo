@@ -133,7 +133,7 @@ body {
 .toggle-all {
     width: 1px;
     height: 1px;
-    border: none; /* Mobile Safari */
+    border: none; /* Mobile Safari 123123123123*/
     opacity: 0;
     position: absolute;
     right: 100%;
